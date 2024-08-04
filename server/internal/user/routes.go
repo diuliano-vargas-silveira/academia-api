@@ -2,9 +2,11 @@ package user
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/diuliano-vargas-silveira/academia-api/server/internal/database"
 	"github.com/diuliano-vargas-silveira/academia-api/server/internal/dto/request"
+	"github.com/diuliano-vargas-silveira/academia-api/server/internal/dto/response"
 	"github.com/gin-gonic/gin"
 )
 
@@ -30,68 +32,86 @@ func handleLogin(ctx *gin.Context) {
 	var requestBody request.LoginRequest
 
 	if err := ctx.BindJSON(&requestBody); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": "invalid payload",
-		})
+		res := response.Response{
+			Code:        http.StatusInternalServerError,
+			Status:      "Internal server error",
+			Data:        nil,
+			Error:       "invalid payload",
+			RequestedAt: time.Now(),
+		}
+		ctx.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
 	if requestBody.Login == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": "login field must not be empty",
-		})
+		res := response.Response{
+			Code:        http.StatusBadRequest,
+			Status:      "Bad Request",
+			Data:        nil,
+			Error:       "login field must not be empty",
+			RequestedAt: time.Now(),
+		}
+		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
 
 	if requestBody.Password == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": "password field must not be empty",
-		})
+		res := response.Response{
+			Code:        http.StatusBadRequest,
+			Status:      "Bad Request",
+			Data:        nil,
+			Error:       "password field must not be empty",
+			RequestedAt: time.Now(),
+		}
+		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
 
-	token, err := service.Login(ctx, requestBody)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
+	response := service.Login(ctx, requestBody)
 
-	ctx.JSON(200, gin.H{"token": token})
+	ctx.JSON(response.Code, response)
 }
 
 func createUser(ctx *gin.Context) {
 	var requestBody request.CreateUserRequest
 
 	if err := ctx.BindJSON(&requestBody); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": "invalid payload",
-		})
+		res := response.Response{
+			Code:        http.StatusInternalServerError,
+			Status:      "Internal server error",
+			Data:        nil,
+			Error:       "invalid payload",
+			RequestedAt: time.Now(),
+		}
+		ctx.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
 	if requestBody.Login == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": "login field must not be empty",
-		})
+		res := response.Response{
+			Code:        http.StatusBadRequest,
+			Status:      "Bad Request",
+			Data:        nil,
+			Error:       "login field must not be empty",
+			RequestedAt: time.Now(),
+		}
+		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
 
 	if requestBody.Password == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": "password field must not be empty",
-		})
+		res := response.Response{
+			Code:        http.StatusBadRequest,
+			Status:      "Bad Request",
+			Data:        nil,
+			Error:       "password field must not be empty",
+			RequestedAt: time.Now(),
+		}
+		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
 
-	err := service.Register(ctx, requestBody)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
+	response := service.Register(ctx, requestBody)
 
-	ctx.Writer.WriteHeader(http.StatusNoContent)
+	ctx.JSON(response.Code, response)
 }
