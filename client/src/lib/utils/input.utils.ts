@@ -2,7 +2,7 @@ export class InputUtils {
 
     replacer: string = 'X'
 
-    format(input: string, mask: string): string {
+    format = (input: string, mask: string): string => {
         let formattedString = '' 
         let indexInput = 0
     

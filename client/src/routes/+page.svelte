@@ -19,4 +19,4 @@
 
 <h1>Welcome to SvelteKit</h1>
 <p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
-<Input name={'nome'} label={'label'} mask='XXX.XXX.XXX-XX' value={value} formatter={format} validator={validator} /> 
+<Input name={'nome'} label={'label'} mask='XXX.XXX.XXX-XX' value={value} formatter={inputUtils.format} validator={validator} /> 
